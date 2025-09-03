@@ -10,13 +10,14 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const links = [
-  { href: "#budget", label: "Budget" },
-  { href: "#expenses", label: "Expenses" },
-  { href: "#savings", label: "Savings" },
-  { href: "#stocks", label: "Stocks" },
-  { href: "#tips", label: "Tips" },
+  { href: "/budget", label: "Budget" },
+  { href: "/expenses", label: "Expenses" },
+  { href: "/savings", label: "Savings" },
+  { href: "/stocks", label: "Stocks" },
+  { href: "/tips", label: "Tips" },
 ];
 
 export function Header() {
@@ -24,23 +25,23 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <a href="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <div className="h-8 w-8 rounded-lg bg-primary/10 grid place-items-center">
             <span className="h-3 w-3 rounded-sm bg-primary block" />
           </div>
           <span className="text-lg font-extrabold tracking-tight">FinSight</span>
-        </a>
+        </Link>
         <nav className="hidden md:flex items-center gap-6 text-sm">
           {links.map((l) => (
-            <a
+            <Link
               key={l.href}
-              href={l.href}
+              to={l.href}
               className={cn(
                 "text-muted-foreground hover:text-foreground transition-colors",
               )}
             >
               {l.label}
-            </a>
+            </Link>
           ))}
         </nav>
         <div className="hidden md:flex items-center gap-2">
@@ -58,14 +59,14 @@ export function Header() {
         <div className="md:hidden border-t">
           <div className="container py-3 flex flex-col gap-3">
             {links.map((l) => (
-              <a
+              <Link
                 key={l.href}
-                href={l.href}
+                to={l.href}
                 onClick={() => setOpen(false)}
                 className="py-1 text-muted-foreground hover:text-foreground"
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
             <AuthButtons compact />
           </div>
