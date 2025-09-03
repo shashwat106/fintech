@@ -18,6 +18,7 @@ const links = [
   { href: "/savings", label: "Savings" },
   { href: "/stocks", label: "Stocks" },
   { href: "/tips", label: "Tips" },
+  { href: "/news", label: "News" },
 ];
 
 export function Header() {
