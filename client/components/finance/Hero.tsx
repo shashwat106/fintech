@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function Hero() {
   return (
@@ -17,12 +18,12 @@ export function Hero() {
             Plan budgets, track expenses, set savings goals, explore stocks, and get AI-powered insights—all in a clean, modern dashboard.
           </p>
           <div className="mt-8 flex items-center gap-4">
-            <a href="#budget">
+            <Link to="/budget">
               <Button size="lg" className="bg-primary hover:bg-primary/90">
                 Get Started <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-            </a>
-            <a href="#tips" className="text-sm text-muted-foreground hover:text-foreground">See daily tips</a>
+            </Link>
+            <Link to="/tips" className="text-sm text-muted-foreground hover:text-foreground">See daily tips</Link>
           </div>
         </div>
       </div>
