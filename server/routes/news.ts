@@ -33,8 +33,9 @@ function parseRss(xml: string): NewsItem[] {
 export const handleNews: RequestHandler = async (_req, res) => {
   try {
     const sources = [
+      "https://news.google.com/rss/search?q=economy%20OR%20economics%20OR%20inflation%20when%3A7d&hl=en-US&gl=US&ceid=US:en",
+      "https://finance.yahoo.com/news/rssindex",
       "https://www.reddit.com/r/Economics/.rss",
-      "https://www.ft.com/economy?format=rss",
     ];
     let feed: string | null = null;
     for (const url of sources) {
