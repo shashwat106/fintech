@@ -12,6 +12,7 @@ import ExpensesPage from "./pages/Expenses";
 import SavingsPage from "./pages/Savings";
 import StocksPage from "./pages/Stocks";
 import TipsPage from "./pages/Tips";
+import NewsPage from "./pages/News";
 import NotFound from "./pages/NotFound";
 import { Layout } from "@/components/site/Layout";
 
