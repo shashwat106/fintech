@@ -19,6 +19,7 @@ export function Footer() {
           <h4 className="font-semibold mb-3">Resources</h4>
           <ul className="space-y-2 text-sm">
             <li><a className="hover:underline" href="https://github.com" target="_blank" rel="noreferrer">GitHub</a></li>
+            <li><a className="hover:underline" href="/news">News</a></li>
             <li><a className="hover:underline" href="#privacy">Privacy</a></li>
           </ul>
         </div>
