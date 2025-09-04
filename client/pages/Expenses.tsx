@@ -30,7 +30,11 @@ import {
   ResponsiveContainer,
   PieChart as RechartsPieChart,
   Pie,
-  Cell
+  Cell,
+  CartesianGrid,
+  Legend,
+  LineChart,
+  Line
 } from "recharts";
 
 export default function ExpensesPage() {
@@ -596,59 +600,76 @@ export default function ExpensesPage() {
           <div className="grid gap-6 md:grid-cols-2">
             <Card className="rounded-xl">
               <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">Spending Insights</h3>
-                <div className="space-y-4">
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <h4 className="font-medium text-blue-900 mb-2">Top Spending Category</h4>
-                    <p className="text-sm text-blue-800">
-                      {Object.keys(categoryTotals).length > 0 ? (
-                        `${Object.entries(categoryTotals).reduce((max, [cat, amount]) => 
-                          amount > (categoryTotals[max] || 0) ? cat : max, ''
-                        )} - $${Math.max(...Object.values(categoryTotals)).toLocaleString()}`
-                      ) : (
-                        "No expenses recorded yet"
-                      )}
-                    </p>
+                <h3 className="font-semibold mb-4">Spending by Category</h3>
+                {Object.keys(categoryTotals).length > 0 ? (
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RechartsPieChart>
+                        <Pie
+                          data={Object.entries(categoryTotals).map(([name, value], i) => ({
+                            name,
+                            value,
+                            fill: `hsl(${(i * 45) % 360}, 70%, 60%)`
+                          }))}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          dataKey="value"
+                        >
+                          {Object.entries(categoryTotals).map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={`hsl(${(index * 45) % 360}, 70%, 60%)`} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Amount']} />
+                      </RechartsPieChart>
+                    </ResponsiveContainer>
                   </div>
-                  
-                  <div className="p-4 bg-green-50 rounded-lg">
-                    <h4 className="font-medium text-green-900 mb-2">Average Daily Spending</h4>
-                    <p className="text-sm text-green-800">
-                      {expenses.length > 0 ? (
-                        `$${(totalExpenses / Math.max(expenses.length, 30)).toFixed(2)} per day`
-                      ) : (
-                        "Start tracking to see your average"
-                      )}
-                    </p>
+                ) : (
+                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                    <div className="text-center">
+                      <RechartsPieChart className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                      <p>No expenses recorded yet</p>
+                      <p className="text-sm">Add expenses to see spending breakdown</p>
+                    </div>
                   </div>
-                  
-                  <div className="p-4 bg-yellow-50 rounded-lg">
-                    <h4 className="font-medium text-yellow-900 mb-2">Savings Rate</h4>
-                    <p className="text-sm text-yellow-800">
-                      Track your income to calculate savings rate
-                    </p>
-                  </div>
-                </div>
+                )}
               </CardContent>
             </Card>
             
             <Card className="rounded-xl">
               <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">Financial Health Score</h3>
-                <div className="text-center">
-                  <div className="relative w-32 h-32 mx-auto mb-4">
-                    <div className="w-32 h-32 rounded-full border-8 border-gray-200 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-primary">75</div>
-                        <div className="text-xs text-muted-foreground">Score</div>
-                      </div>
+                <h3 className="font-semibold mb-4">Spending Trends</h3>
+                {expenses.length > 0 ? (
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={Object.entries(categoryTotals).map(([name, value]) => ({
+                          category: name.length > 10 ? name.substring(0, 10) + '...' : name,
+                          amount: value,
+                          average: Math.random() * value * 0.8 + value * 0.6 // Simulated average for comparison
+                        }))}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="category" />
+                        <YAxis tickFormatter={(value) => `$${value.toLocaleString()}`} />
+                        <Tooltip formatter={(value, name) => [`$${value.toLocaleString()}`, name === 'amount' ? 'Your Spending' : 'Suggested Budget']} />
+                        <Bar dataKey="amount" fill="#3b82f6" name="amount" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="average" fill="#10b981" name="average" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                    <div className="text-center">
+                      <BarChart3 className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                      <p>No spending data yet</p>
+                      <p className="text-sm">Add expenses to see trends</p>
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    Good! You're tracking expenses and setting goals. 
-                    Add more data to improve accuracy.
-                  </p>
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>

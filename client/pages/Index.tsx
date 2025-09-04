@@ -18,6 +18,7 @@ import {
   Cell,
   RadialBarChart,
   RadialBar,
+  CartesianGrid,
 } from "recharts";
 
 const featureItems = [
@@ -210,50 +211,89 @@ export default function Index() {
             <Card className="rounded-xl shadow-sm">
               <CardContent className="p-6">
                 {user && expenseSummary ? (
-                  <div className="space-y-6">
-                    {expenseSummary.comparison.map((item, i) => {
-                      const userPercentage = item.average > 0 ? (item.user / item.average) * 100 : 0;
-                      const isGood = item.user <= item.average;
-                      return (
-                        <div key={i} className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <h4 className="font-medium">{item.category}</h4>
-                            <div className="flex items-center gap-4 text-sm">
-                              <span className="text-muted-foreground">
-                                You: ${item.user.toLocaleString()}
-                              </span>
-                              <span className="text-muted-foreground">
-                                Average: ${item.average.toLocaleString()}
-                              </span>
-                              <span className={`font-medium ${
-                                isGood ? "text-green-600" : "text-orange-600"
-                              }`}>
-                                {isGood ? "✓ " : "⚠ "}
-                                {userPercentage.toFixed(0)}% of avg
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex gap-2 h-3 bg-gray-100 rounded-full overflow-hidden">
-                            <div 
-                              className="bg-green-500 transition-all duration-500"
-                              style={{ width: `${Math.min((item.user / Math.max(item.user, item.average)) * 100, 100)}%` }}
+                  <div className="grid gap-8 lg:grid-cols-2">
+                    {/* Spending Breakdown Pie Chart */}
+                    <div>
+                      <h4 className="font-semibold mb-4">Your Spending Breakdown</h4>
+                      <div className="h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={expenseSummary.comparison.map((item, i) => ({
+                                name: item.category,
+                                value: item.user,
+                                fill: `hsl(${(i * 60) % 360}, 70%, 60%)`
+                              }))}
+                              cx="50%"
+                              cy="50%"
+                              labelLine={false}
+                              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                              outerRadius={80}
+                              fill="#8884d8"
+                              dataKey="value"
                             />
-                            <div 
-                              className="bg-gray-300 transition-all duration-500"
-                              style={{ width: `${Math.min((item.average / Math.max(item.user, item.average)) * 100, 100)}%` }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                    <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                      <h4 className="font-semibold text-blue-900">Your Spending Summary</h4>
-                      <p className="text-sm text-blue-800 mt-1">
-                        You're spending ${expenseSummary.totalSpent.toLocaleString()} monthly based on your tracked expenses.
-                        {expenseSummary.expenseCount > 0 
-                          ? ` You have ${expenseSummary.expenseCount} recorded expenses.`
-                          : ' Start tracking your expenses to see detailed comparisons.'}
-                      </p>
+                            <Tooltip formatter={(value) => [`$${value.toLocaleString()}`, 'Amount']} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+
+                    {/* Comparison Bar Chart */}
+                    <div>
+                      <h4 className="font-semibold mb-4">You vs Average Spending</h4>
+                      <div className="h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart
+                            data={expenseSummary.comparison.map(item => ({
+                              category: item.category.length > 8 ? item.category.substring(0, 8) + '...' : item.category,
+                              you: item.user,
+                              average: item.average,
+                              difference: item.user - item.average
+                            }))}
+                            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="category" />
+                            <YAxis tickFormatter={(value) => `$${value.toLocaleString()}`} />
+                            <Tooltip formatter={(value, name) => [`$${value.toLocaleString()}`, name === 'you' ? 'Your Spending' : 'Average Spending']} />
+                            <Bar dataKey="you" fill="#3b82f6" name="you" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="average" fill="#6b7280" name="average" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+
+                    {/* Summary Cards */}
+                    <div className="lg:col-span-2 grid gap-4 md:grid-cols-3">
+                      <div className="p-4 bg-blue-50 rounded-lg">
+                        <h4 className="font-semibold text-blue-900">Total Monthly Spending</h4>
+                        <p className="text-2xl font-bold text-blue-800 mt-1">
+                          ${expenseSummary.totalSpent.toLocaleString()}
+                        </p>
+                        <p className="text-sm text-blue-700 mt-1">
+                          {expenseSummary.expenseCount} recorded expenses
+                        </p>
+                      </div>
+                      
+                      <div className="p-4 bg-green-50 rounded-lg">
+                        <h4 className="font-semibold text-green-900">Best Category</h4>
+                        <p className="text-lg font-bold text-green-800 mt-1">
+                          {expenseSummary.comparison.find(item => item.user <= item.average)?.category || 'None yet'}
+                        </p>
+                        <p className="text-sm text-green-700 mt-1">
+                          Below average spending ✓
+                        </p>
+                      </div>
+                      
+                      <div className="p-4 bg-orange-50 rounded-lg">
+                        <h4 className="font-semibold text-orange-900">Watch Category</h4>
+                        <p className="text-lg font-bold text-orange-800 mt-1">
+                          {expenseSummary.comparison.find(item => item.user > item.average)?.category || 'All good!'}
+                        </p>
+                        <p className="text-sm text-orange-700 mt-1">
+                          Above average spending ⚠
+                        </p>
+                      </div>
                     </div>
                   </div>
                 ) : (
