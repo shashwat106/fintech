@@ -1,58 +1,110 @@
 import type { RequestHandler } from "express";
 
-// Minimal RSS item type
-interface NewsItem {
+interface NewsArticle {
   title: string;
-  link: string;
-  pubDate?: string;
-  description?: string;
+  description: string;
+  url: string;
+  urlToImage?: string;
+  publishedAt: string;
+  source: {
+    name: string;
+  };
+  content?: string;
 }
 
-function stripTags(html: string) {
-  return html.replace(/<[^>]*>/g, "").trim();
+interface NewsResponse {
+  status: string;
+  totalResults: number;
+  articles: NewsArticle[];
 }
 
-function parseRss(xml: string): NewsItem[] {
-  const items: NewsItem[] = [];
-  const itemRegex = /<item[\s\S]*?<\/item>/g;
-  const titleRegex = /<title>([\s\S]*?)<\/title>/i;
-  const linkRegex = /<link>([\s\S]*?)<\/link>/i;
-  const pubDateRegex = /<pubDate>([\s\S]*?)<\/pubDate>/i;
-  const descRegex = /<description>([\s\S]*?)<\/description>/i;
-  const matches = xml.match(itemRegex) || [];
-  for (const block of matches.slice(0, 15)) {
-    const title = titleRegex.exec(block)?.[1] ?? "Untitled";
-    const link = linkRegex.exec(block)?.[1] ?? "";
-    const pubDate = pubDateRegex.exec(block)?.[1];
-    const description = descRegex.exec(block)?.[1];
-    items.push({ title: stripTags(title), link: stripTags(link), pubDate: pubDate?.trim(), description: description ? stripTags(description) : undefined });
-  }
-  return items;
-}
+// Economics-related keywords for filtering
+const ECONOMICS_KEYWORDS = [
+  'economy', 'economics', 'economic', 'inflation', 'recession', 'gdp', 'unemployment',
+  'federal reserve', 'fed', 'interest rates', 'monetary policy', 'fiscal policy',
+  'budget', 'deficit', 'debt', 'treasury', 'bonds', 'stocks', 'market', 'trading',
+  'nasdaq', 'dow jones', 's&p 500', 'wall street', 'banking', 'finance', 'financial',
+  'tax', 'taxation', 'tariff', 'trade', 'commerce', 'retail sales', 'consumer',
+  'housing market', 'mortgage', 'employment', 'jobs report', 'payroll', 'wages',
+  'cpi', 'ppi', 'consumer price index', 'producer price index'
+];
+
+// Check if article is economics-related
+const isEconomicsRelated = (article: NewsArticle): boolean => {
+  const textToCheck = `${article.title} ${article.description || ''}`.toLowerCase();
+  return ECONOMICS_KEYWORDS.some(keyword => textToCheck.includes(keyword.toLowerCase()));
+};
 
 export const handleNews: RequestHandler = async (_req, res) => {
   try {
-    const sources = [
-      "https://news.google.com/rss/search?q=economy%20OR%20economics%20OR%20inflation%20when%3A7d&hl=en-US&gl=US&ceid=US:en",
-      "https://finance.yahoo.com/news/rssindex",
-      "https://www.reddit.com/r/Economics/.rss",
+    const apiKey = process.env.NEWS_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: "News API key not configured" });
+    }
+
+    // Fetch news from NewsAPI with economics focus
+    const queries = [
+      'US economy OR inflation OR "Federal Reserve" OR "interest rates" OR unemployment',
+      'GDP OR recession OR "economic growth" OR "monetary policy" OR "fiscal policy"',
+      '"stock market" OR nasdaq OR "dow jones" OR "wall street" OR trading'
     ];
-    let feed: string | null = null;
-    for (const url of sources) {
+
+    let allArticles: NewsArticle[] = [];
+
+    for (const query of queries) {
       try {
-        const r = await fetch(url, { headers: { "user-agent": "FinSightBot/1.0" } });
-        if (r.ok) {
-          feed = await r.text();
-          break;
+        const url = `https://newsapi.org/v2/everything?` + new URLSearchParams({
+          q: query,
+          domains: 'reuters.com,apnews.com,bloomberg.com,cnbc.com,marketwatch.com,wsj.com,ft.com,economist.com,forbes.com,businessinsider.com',
+          language: 'en',
+          sortBy: 'publishedAt',
+          pageSize: '20',
+          apiKey
+        });
+
+        const response = await fetch(url);
+        if (response.ok) {
+          const data: NewsResponse = await response.json();
+          if (data.articles) {
+            allArticles.push(...data.articles);
+          }
         }
-      } catch {
-        // try next
+      } catch (error) {
+        console.error('Error fetching news for query:', query, error);
       }
     }
-    if (!feed) return res.json({ items: [] });
-    const items = parseRss(feed);
-    res.json({ items });
-  } catch (e) {
-    res.status(500).json({ error: "Failed to load news" });
+
+    // Remove duplicates based on URL
+    const uniqueArticles = allArticles.filter((article, index, self) => 
+      index === self.findIndex(a => a.url === article.url)
+    );
+
+    // Filter for economics-related content
+    const economicsArticles = uniqueArticles.filter(isEconomicsRelated);
+
+    // Sort by publish date (newest first) and limit results
+    const sortedArticles = economicsArticles
+      .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+      .slice(0, 30);
+
+    // Transform to match frontend expectations
+    const items = sortedArticles.map(article => ({
+      title: article.title,
+      link: article.url,
+      pubDate: article.publishedAt,
+      description: article.description || '',
+      source: article.source.name,
+      image: article.urlToImage
+    }));
+
+    res.json({ 
+      items,
+      totalResults: items.length,
+      lastUpdated: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('News API error:', error);
+    res.status(500).json({ error: "Failed to load economics news" });
   }
 };

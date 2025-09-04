@@ -28,6 +28,7 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
   app.get("/api/news", handleNews);
+  app.get("/api/news", handleNews);
 
   // Authentication routes
   app.use("/api/auth", authRoutes);
