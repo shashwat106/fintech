@@ -13,6 +13,7 @@ import NewsPage from "./pages/News";
 import PoliciesPage from "./pages/Policies";
 import EducationPage from "./pages/Education";
 import ConnectPage from "./pages/Connect";
+import TipsPage from "./pages/Tips";
 import NotFound from "./pages/NotFound";
 import { Layout } from "@/components/site/Layout";
 import { AuthProvider } from "@/components/auth/AuthContext";
@@ -33,6 +34,7 @@ const App = () => (
               <Route path="/expenses" element={<ExpensesPage />} />
               <Route path="/education" element={<EducationPage />} />
               <Route path="/connect" element={<ConnectPage />} />
+              <Route path="/tips" element={<TipsPage />} />
               <Route path="/news" element={<NewsPage />} />
               <Route path="/policies" element={<PoliciesPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
