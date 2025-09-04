@@ -9,11 +9,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import BudgetPage from "./pages/Budget";
 import ExpensesPage from "./pages/Expenses";
-import SavingsPage from "./pages/Savings";
-import StocksPage from "./pages/Stocks";
-import TipsPage from "./pages/Tips";
 import NewsPage from "./pages/News";
 import PoliciesPage from "./pages/Policies";
+import EducationPage from "./pages/Education";
+import ConnectPage from "./pages/Connect";
 import NotFound from "./pages/NotFound";
 import { Layout } from "@/components/site/Layout";
 import { AuthProvider } from "@/components/auth/AuthContext";
@@ -32,9 +31,8 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/budget" element={<BudgetPage />} />
               <Route path="/expenses" element={<ExpensesPage />} />
-              <Route path="/savings" element={<SavingsPage />} />
-              <Route path="/stocks" element={<StocksPage />} />
-              <Route path="/tips" element={<TipsPage />} />
+              <Route path="/education" element={<EducationPage />} />
+              <Route path="/connect" element={<ConnectPage />} />
               <Route path="/news" element={<NewsPage />} />
               <Route path="/policies" element={<PoliciesPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

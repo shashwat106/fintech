@@ -321,6 +321,31 @@ export default function BudgetPage() {
                     <TrendingUp className="h-4 w-4 mr-2" />
                     Run Simulation
                   </Button>
+                  
+                  {/* Budget Tips Section */}
+                  <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl">
+                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                      💡 Smart Budgeting Tips
+                    </h3>
+                    <div className="space-y-3 text-sm">
+                      <div className="p-3 bg-white rounded-lg">
+                        <h4 className="font-medium mb-1">50/30/20 Rule</h4>
+                        <p className="text-muted-foreground">Allocate 50% to needs, 30% to wants, and 20% to savings and debt repayment.</p>
+                      </div>
+                      <div className="p-3 bg-white rounded-lg">
+                        <h4 className="font-medium mb-1">Emergency Fund Priority</h4>
+                        <p className="text-muted-foreground">Build $1,000 emergency fund first, then work toward 3-6 months of expenses.</p>
+                      </div>
+                      <div className="p-3 bg-white rounded-lg">
+                        <h4 className="font-medium mb-1">Track Everything</h4>
+                        <p className="text-muted-foreground">Small purchases add up quickly. Track every expense to understand your spending patterns.</p>
+                      </div>
+                      <div className="p-3 bg-white rounded-lg">
+                        <h4 className="font-medium mb-1">Automate Savings</h4>
+                        <p className="text-muted-foreground">Set up automatic transfers to savings accounts to pay yourself first.</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 
                 {simulationResult && (

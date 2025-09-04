@@ -9,6 +9,7 @@ import { authRoutes } from "./routes/auth";
 import { expenseRoutes } from "./routes/expenses";
 import { budgetRoutes } from "./routes/budgets";
 import { policyRoutes } from "./routes/policies";
+import { userDataRoutes } from "./routes/user-data";
 import { authenticateToken } from "./middleware/auth";
 
 export function createServer() {
@@ -34,6 +35,7 @@ export function createServer() {
   // Protected routes
   app.use("/api/expenses", authenticateToken, expenseRoutes);
   app.use("/api/budgets", authenticateToken, budgetRoutes);
+  app.use("/api/user-data", authenticateToken, userDataRoutes);
   app.use("/api/policies", policyRoutes);
 
   return app;

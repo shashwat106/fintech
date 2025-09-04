@@ -14,10 +14,9 @@ import {
 
 const links = [
   { href: "/budget", label: "Budget" },
-  { href: "/expenses", label: "Expenses" },
-  { href: "/savings", label: "Savings" },
-  { href: "/stocks", label: "Stocks" },
-  { href: "/tips", label: "Tips" },
+  { href: "/expenses", label: "Expenses & Savings" },
+  { href: "/education", label: "Financial Education" },
+  { href: "/connect", label: "Career Connect" },
   { href: "/news", label: "News" },
   { href: "/policies", label: "Policies" },
 ];
