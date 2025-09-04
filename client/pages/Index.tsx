@@ -85,7 +85,9 @@ export default function Index() {
       {/* 3. Dashboard preview */}
       <section className="container">
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl font-bold">Your Finances, All in One Place</h2>
+          <h2 className="text-3xl font-bold">
+            Your Finances, All in One Place
+          </h2>
           <p className="text-muted-foreground mt-2">
             From budgets to stocks—everything in a clean, modern dashboard.
           </p>
@@ -93,7 +95,9 @@ export default function Index() {
         <div className="relative mt-10 mx-auto max-w-5xl">
           <div className="w-full rounded-2xl border bg-white shadow-sm overflow-hidden">
             <div className="aspect-[16/9] w-full bg-gradient-to-br from-emerald-50 to-white grid place-items-center">
-              <div className="text-sm text-muted-foreground">Dashboard Preview</div>
+              <div className="text-sm text-muted-foreground">
+                Dashboard Preview
+              </div>
             </div>
           </div>
           {/* floating mini charts */}
@@ -111,7 +115,15 @@ export default function Index() {
             <div className="absolute bottom-5 right-5 w-40 h-28 md:w-52 md:h-32 rounded-xl border bg-white shadow-sm p-3 z-10">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={24} outerRadius={44} stroke="#fff" strokeWidth={2}>
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={24}
+                    outerRadius={44}
+                    stroke="#fff"
+                    strokeWidth={2}
+                  >
                     {pieData.map((p, i) => (
                       <Cell key={i} fill={p.color} />
                     ))}
@@ -122,11 +134,24 @@ export default function Index() {
             </div>
             <div className="absolute top-5 right-5 w-28 h-28 md:w-36 md:h-36 rounded-full border bg-white shadow-sm p-3 z-10">
               <ResponsiveContainer width="100%" height="100%">
-                <RadialBarChart innerRadius="70%" outerRadius="100%" data={radialData} startAngle={90} endAngle={-270}>
-                  <RadialBar minAngle={15} background dataKey="value" cornerRadius={10} />
+                <RadialBarChart
+                  innerRadius="70%"
+                  outerRadius="100%"
+                  data={radialData}
+                  startAngle={90}
+                  endAngle={-270}
+                >
+                  <RadialBar
+                    minAngle={15}
+                    background
+                    dataKey="value"
+                    cornerRadius={10}
+                  />
                 </RadialBarChart>
               </ResponsiveContainer>
-              <div className="absolute inset-0 grid place-items-center text-xs md:text-sm font-semibold">72%</div>
+              <div className="absolute inset-0 grid place-items-center text-xs md:text-sm font-semibold">
+                72%
+              </div>
             </div>
           </div>
         </div>
@@ -140,7 +165,10 @@ export default function Index() {
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {[
             { title: "Sign Up", text: "Quick and easy onboarding." },
-            { title: "Connect Accounts", text: "Import your expenses & income." },
+            {
+              title: "Connect Accounts",
+              text: "Import your expenses & income.",
+            },
             { title: "Grow Smarter", text: "Get personalized AI insights." },
           ].map((s, i) => (
             <Card key={i} className="rounded-xl shadow-sm">
@@ -177,7 +205,10 @@ export default function Index() {
             ].map((t, i) => (
               <Card key={i} className="rounded-xl shadow-sm">
                 <CardContent className="p-6">
-                  <div className="flex gap-1 text-amber-400" aria-label="5 star rating">
+                  <div
+                    className="flex gap-1 text-amber-400"
+                    aria-label="5 star rating"
+                  >
                     {Array.from({ length: 5 }).map((_, j) => (
                       <Star key={j} className="h-4 w-4 fill-current" />
                     ))}
@@ -195,12 +226,23 @@ export default function Index() {
       <section className="container">
         <div className="max-w-2xl mx-auto text-center">
           <h3 className="text-2xl font-bold">Get weekly AI money tips</h3>
-          <p className="text-muted-foreground mt-2">Join thousands of users learning to save smarter.</p>
+          <p className="text-muted-foreground mt-2">
+            Join thousands of users learning to save smarter.
+          </p>
           <form className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-            <Input type="email" placeholder="you@example.com" required className="h-11 max-w-xs" />
-            <Button type="submit" className="h-11 px-6">Subscribe</Button>
+            <Input
+              type="email"
+              placeholder="you@example.com"
+              required
+              className="h-11 max-w-xs"
+            />
+            <Button type="submit" className="h-11 px-6">
+              Subscribe
+            </Button>
           </form>
-          <p className="text-xs text-muted-foreground mt-2">No spam. Unsubscribe anytime.</p>
+          <p className="text-xs text-muted-foreground mt-2">
+            No spam. Unsubscribe anytime.
+          </p>
         </div>
       </section>
     </div>
