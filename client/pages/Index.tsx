@@ -53,6 +53,14 @@ const pieData = [
 ];
 const radialData = [{ name: "Progress", value: 72, fill: "#27ae60" }];
 
+const comparisonData = [
+  { category: "Housing", user: 1500, average: 1800, color: "#27ae60" },
+  { category: "Food", user: 600, average: 750, color: "#3b82f6" },
+  { category: "Transportation", user: 250, average: 400, color: "#f59e0b" },
+  { category: "Entertainment", user: 300, average: 350, color: "#8b5cf6" },
+  { category: "Utilities", user: 200, average: 220, color: "#ef4444" },
+];
+
 export default function Index() {
   return (
     <div className="space-y-20">
@@ -92,35 +100,31 @@ export default function Index() {
             From budgets to stocks—everything in a clean, modern dashboard.
           </p>
         </div>
-        <div className="relative mt-10 mx-auto max-w-5xl">
-          <div className="w-full rounded-2xl border bg-white shadow-sm overflow-hidden">
-            <div className="aspect-[16/9] w-full bg-gradient-to-br from-emerald-50 to-white grid place-items-center">
-              <div className="text-sm text-muted-foreground">
-                Dashboard Preview
-              </div>
-            </div>
-          </div>
-          {/* floating mini charts */}
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute top-5 left-5 w-44 h-28 md:w-56 md:h-32 rounded-xl border bg-white shadow-sm p-3 z-10">
-              <ResponsiveContainer width="100%" height="100%">
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          <Card className="rounded-xl shadow-sm">
+            <CardContent className="p-6">
+              <h3 className="font-semibold mb-4">Monthly Expenses</h3>
+              <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={barData}>
-                  <XAxis dataKey="name" hide />
-                  <YAxis hide />
+                  <XAxis dataKey="name" />
+                  <YAxis />
                   <Tooltip />
-                  <Bar dataKey="value" radius={[6, 6, 0, 0]} fill="#27ae60" />
+                  <Bar dataKey="value" radius={[4, 4, 0, 0]} fill="#27ae60" />
                 </BarChart>
               </ResponsiveContainer>
-            </div>
-            <div className="absolute bottom-5 right-5 w-40 h-28 md:w-52 md:h-32 rounded-xl border bg-white shadow-sm p-3 z-10">
-              <ResponsiveContainer width="100%" height="100%">
+            </CardContent>
+          </Card>
+          <Card className="rounded-xl shadow-sm">
+            <CardContent className="p-6">
+              <h3 className="font-semibold mb-4">Budget Allocation</h3>
+              <ResponsiveContainer width="100%" height={200}>
                 <PieChart>
                   <Pie
                     data={pieData}
                     dataKey="value"
                     nameKey="name"
-                    innerRadius={24}
-                    outerRadius={44}
+                    innerRadius={40}
+                    outerRadius={80}
                     stroke="#fff"
                     strokeWidth={2}
                   >
@@ -131,33 +135,104 @@ export default function Index() {
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
-            </div>
-            <div className="absolute top-5 right-5 w-28 h-28 md:w-36 md:h-36 rounded-full border bg-white shadow-sm p-3 z-10">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadialBarChart
-                  innerRadius="70%"
-                  outerRadius="100%"
-                  data={radialData}
-                  startAngle={90}
-                  endAngle={-270}
-                >
-                  <RadialBar
-                    minAngle={15}
-                    background
-                    dataKey="value"
-                    cornerRadius={10}
-                  />
-                </RadialBarChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 grid place-items-center text-xs md:text-sm font-semibold">
-                72%
+            </CardContent>
+          </Card>
+          <Card className="rounded-xl shadow-sm">
+            <CardContent className="p-6">
+              <h3 className="font-semibold mb-4">Savings Goal</h3>
+              <div className="flex items-center justify-center h-[200px]">
+                <div className="relative w-32 h-32">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadialBarChart
+                      innerRadius="70%"
+                      outerRadius="100%"
+                      data={radialData}
+                      startAngle={90}
+                      endAngle={-270}
+                    >
+                      <RadialBar
+                        minAngle={15}
+                        background
+                        dataKey="value"
+                        cornerRadius={10}
+                      />
+                    </RadialBarChart>
+                  </ResponsiveContainer>
+                  <div className="absolute inset-0 grid place-items-center text-lg font-semibold">
+                    72%
+                  </div>
+                </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* 4. Expense Comparison */}
+      <section className="py-16 bg-muted/30">
+        <div className="container">
+          <div className="text-center max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold">How You Compare</h2>
+            <p className="text-muted-foreground mt-2">
+              See how your spending compares to the average person in your area.
+            </p>
+          </div>
+          <div className="mt-10 max-w-4xl mx-auto">
+            <Card className="rounded-xl shadow-sm">
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  {comparisonData.map((item, i) => {
+                    const userPercentage = (item.user / item.average) * 100;
+                    const isGood = item.user < item.average;
+                    return (
+                      <div key={i} className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-medium">{item.category}</h4>
+                          <div className="flex items-center gap-4 text-sm">
+                            <span className="text-muted-foreground">
+                              You: ${item.user}
+                            </span>
+                            <span className="text-muted-foreground">
+                              Average: ${item.average}
+                            </span>
+                            <span className={`font-medium ${
+                              isGood ? "text-green-600" : "text-orange-600"
+                            }`}>
+                              {isGood ? "✓ " : "⚠ "}
+                              {userPercentage.toFixed(0)}% of avg
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 h-3 bg-gray-100 rounded-full overflow-hidden">
+                          <div 
+                            className="bg-green-500 transition-all duration-500"
+                            style={{ width: `${Math.min((item.user / Math.max(item.user, item.average)) * 100, 100)}%` }}
+                          />
+                          <div 
+                            className="bg-gray-300 transition-all duration-500"
+                            style={{ width: `${Math.min((item.average / Math.max(item.user, item.average)) * 100, 100)}%` }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-semibold text-blue-900">Your Spending Summary</h4>
+                  <p className="text-sm text-blue-800 mt-1">
+                    You're spending ${comparisonData.reduce((sum, item) => sum + item.user, 0).toLocaleString()} monthly, 
+                    which is ${comparisonData.reduce((sum, item) => sum + (item.average - item.user), 0).toLocaleString()} 
+                    {comparisonData.reduce((sum, item) => sum + (item.average - item.user), 0) > 0 ? 'less' : 'more'} than the average person. 
+                    {comparisonData.reduce((sum, item) => sum + (item.average - item.user), 0) > 0 ? 'Great job staying under budget!' : 'Consider reviewing your spending in some categories.'}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
-      {/* 4. How it works */}
+      {/* 5. How it works */}
       <section className="container">
         <div className="text-center max-w-2xl mx-auto">
           <h2 className="text-3xl font-bold">How It Works</h2>
@@ -184,7 +259,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 5. Testimonials */}
+      {/* 6. Testimonials */}
       <section className="py-16 bg-muted/30">
         <div className="container">
           <h2 className="text-3xl font-bold text-center">What users say</h2>
@@ -222,7 +297,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 6. Newsletter */}
+      {/* 7. Newsletter */}
       <section className="container">
         <div className="max-w-2xl mx-auto text-center">
           <h3 className="text-2xl font-bold">Get weekly AI money tips</h3>
