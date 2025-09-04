@@ -90,15 +90,15 @@ export default function Index() {
             From budgets to stocks—everything in a clean, modern dashboard.
           </p>
         </div>
-        <div className="relative mt-10">
-          <div className="mx-auto max-w-5xl rounded-2xl border bg-white shadow-sm overflow-hidden">
+        <div className="relative mt-10 mx-auto max-w-5xl">
+          <div className="w-full rounded-2xl border bg-white shadow-sm overflow-hidden">
             <div className="aspect-[16/9] w-full bg-gradient-to-br from-emerald-50 to-white grid place-items-center">
               <div className="text-sm text-muted-foreground">Dashboard Preview</div>
             </div>
           </div>
           {/* floating mini charts */}
-          <div className="pointer-events-none">
-            <div className="absolute -top-6 left-6 w-56 h-36 rounded-xl border bg-white shadow-sm p-3">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute top-5 left-5 w-44 h-28 md:w-56 md:h-32 rounded-xl border bg-white shadow-sm p-3 z-10">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={barData}>
                   <XAxis dataKey="name" hide />
@@ -108,10 +108,10 @@ export default function Index() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div className="absolute -bottom-6 right-6 w-48 h-36 rounded-xl border bg-white shadow-sm p-3">
+            <div className="absolute bottom-5 right-5 w-40 h-28 md:w-52 md:h-32 rounded-xl border bg-white shadow-sm p-3 z-10">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={28} outerRadius={48} stroke="#fff" strokeWidth={2}>
+                  <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={24} outerRadius={44} stroke="#fff" strokeWidth={2}>
                     {pieData.map((p, i) => (
                       <Cell key={i} fill={p.color} />
                     ))}
@@ -120,13 +120,13 @@ export default function Index() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="absolute top-1/2 -translate-y-1/2 -right-6 w-40 h-40 rounded-full border bg-white shadow-sm p-3">
+            <div className="absolute top-5 right-5 w-28 h-28 md:w-36 md:h-36 rounded-full border bg-white shadow-sm p-3 z-10">
               <ResponsiveContainer width="100%" height="100%">
                 <RadialBarChart innerRadius="70%" outerRadius="100%" data={radialData} startAngle={90} endAngle={-270}>
                   <RadialBar minAngle={15} background dataKey="value" cornerRadius={10} />
                 </RadialBarChart>
               </ResponsiveContainer>
-              <div className="absolute inset-0 grid place-items-center text-sm font-semibold">72%</div>
+              <div className="absolute inset-0 grid place-items-center text-xs md:text-sm font-semibold">72%</div>
             </div>
           </div>
         </div>
