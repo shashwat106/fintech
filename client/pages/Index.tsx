@@ -306,45 +306,8 @@ export default function Index() {
         </div>
       </section>
 
-      {/* 6. Testimonials */}
-      <section className="py-16 bg-muted/30">
-        <div className="container">
-          <h2 className="text-3xl font-bold text-center">What users say</h2>
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
-            {[
-              {
-                name: "Aisha K.",
-                text: "I finally stuck to a budget thanks to FinSight!",
-              },
-              {
-                name: "Marco D.",
-                text: "The clean dashboard makes money simple.",
-              },
-              {
-                name: "Priya S.",
-                text: "AI insights showed me where to save more.",
-              },
-            ].map((t, i) => (
-              <Card key={i} className="rounded-xl shadow-sm">
-                <CardContent className="p-6">
-                  <div
-                    className="flex gap-1 text-amber-400"
-                    aria-label="5 star rating"
-                  >
-                    {Array.from({ length: 5 }).map((_, j) => (
-                      <Star key={j} className="h-4 w-4 fill-current" />
-                    ))}
-                  </div>
-                  <p className="mt-3 text-sm leading-relaxed">“{t.text}”</p>
-                  <div className="mt-3 text-sm font-medium">{t.name}</div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* 7. Newsletter */}
+      {/* 6. Newsletter */}
       <section className="container">
         <div className="max-w-2xl mx-auto text-center">
           <h3 className="text-2xl font-bold">Get weekly AI money tips</h3>
