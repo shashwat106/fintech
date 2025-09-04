@@ -12,6 +12,9 @@ export default defineConfig(({ mode }) => ({
       allow: ["./client", "./shared"],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
     },
+    allowedHosts: [
+      "311a1a92-2d5c-454f-aa5d-6e878fc84a62-00-6003uzx66je.sisko.replit.dev",
+    ],
   },
   build: {
     outDir: "dist/spa",

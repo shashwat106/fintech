@@ -1,16 +1,16 @@
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
+import { Menu, User } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/components/auth/AuthContext";
+import { LoginDialog } from "@/components/auth/LoginDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const links = [
   { href: "/budget", label: "Budget" },
@@ -19,10 +19,13 @@ const links = [
   { href: "/stocks", label: "Stocks" },
   { href: "/tips", label: "Tips" },
   { href: "/news", label: "News" },
+  { href: "/policies", label: "Policies" },
 ];
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const { user, logout } = useAuth();
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -48,6 +51,7 @@ export function Header() {
         <div className="hidden md:flex items-center gap-2">
           <AuthButtons />
         </div>
+        <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
         <button
           className="md:hidden inline-flex items-center justify-center rounded-md p-2 hover:bg-accent"
           onClick={() => setOpen((v) => !v)}
@@ -78,41 +82,41 @@ export function Header() {
 }
 
 function AuthButtons({ compact = false }: { compact?: boolean }) {
+  const { user, logout } = useAuth();
+  const [loginOpen, setLoginOpen] = useState(false);
+  
+  if (user) {
+    return (
+      <div className={cn("flex items-center gap-2", compact && "flex-col items-stretch")}>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              {user.name}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={logout}>
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    );
+  }
+  
   return (
-    <div className={cn("flex items-center gap-2", compact && "flex-col items-stretch")}>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="ghost">Log in</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Welcome back</DialogTitle>
-          </DialogHeader>
-          <form className="grid gap-3">
-            <Input type="email" placeholder="Email" required />
-            <Input type="password" placeholder="Password" required />
-            <Button type="submit" className="w-full">Log in</Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-            Sign up
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Create your account</DialogTitle>
-          </DialogHeader>
-          <form className="grid gap-3">
-            <Input type="text" placeholder="Full name" required />
-            <Input type="email" placeholder="Email" required />
-            <Input type="password" placeholder="Password" required />
-            <Button type="submit" className="w-full">Create account</Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </div>
+    <>
+      <div className={cn("flex items-center gap-2", compact && "flex-col items-stretch")}>
+        <Button variant="ghost" onClick={() => setLoginOpen(true)}>Log in</Button>
+        <Button 
+          className="bg-primary text-primary-foreground hover:bg-primary/90"
+          onClick={() => setLoginOpen(true)}
+        >
+          Sign up
+        </Button>
+      </div>
+      <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+    </>
   );
 }

@@ -3,6 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Hero } from "@/components/finance/Hero";
 import { PiggyBank, ChartPie, Target, TrendingUp, Star } from "lucide-react";
+import { useAuth } from "@/components/auth/AuthContext";
+import { useEffect, useState } from "react";
+import { LoginDialog } from "@/components/auth/LoginDialog";
 import {
   BarChart,
   Bar,
@@ -62,6 +65,32 @@ const comparisonData = [
 ];
 
 export default function Index() {
+  const { user, token } = useAuth();
+  const [expenseSummary, setExpenseSummary] = useState(null);
+  const [loginOpen, setLoginOpen] = useState(false);
+  
+  useEffect(() => {
+    if (user && token) {
+      fetchExpenseSummary();
+    }
+  }, [user, token]);
+  
+  const fetchExpenseSummary = async () => {
+    try {
+      const response = await fetch('/api/expenses/summary', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setExpenseSummary(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch expense summary:', error);
+    }
+  };
+  
   return (
     <div className="space-y-20">
       {/* 1. Hero */}
@@ -180,52 +209,70 @@ export default function Index() {
           <div className="mt-10 max-w-4xl mx-auto">
             <Card className="rounded-xl shadow-sm">
               <CardContent className="p-6">
-                <div className="space-y-6">
-                  {comparisonData.map((item, i) => {
-                    const userPercentage = (item.user / item.average) * 100;
-                    const isGood = item.user < item.average;
-                    return (
-                      <div key={i} className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <h4 className="font-medium">{item.category}</h4>
-                          <div className="flex items-center gap-4 text-sm">
-                            <span className="text-muted-foreground">
-                              You: ${item.user}
-                            </span>
-                            <span className="text-muted-foreground">
-                              Average: ${item.average}
-                            </span>
-                            <span className={`font-medium ${
-                              isGood ? "text-green-600" : "text-orange-600"
-                            }`}>
-                              {isGood ? "✓ " : "⚠ "}
-                              {userPercentage.toFixed(0)}% of avg
-                            </span>
+                {user && expenseSummary ? (
+                  <div className="space-y-6">
+                    {expenseSummary.comparison.map((item, i) => {
+                      const userPercentage = item.average > 0 ? (item.user / item.average) * 100 : 0;
+                      const isGood = item.user <= item.average;
+                      return (
+                        <div key={i} className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <h4 className="font-medium">{item.category}</h4>
+                            <div className="flex items-center gap-4 text-sm">
+                              <span className="text-muted-foreground">
+                                You: ${item.user.toLocaleString()}
+                              </span>
+                              <span className="text-muted-foreground">
+                                Average: ${item.average.toLocaleString()}
+                              </span>
+                              <span className={`font-medium ${
+                                isGood ? "text-green-600" : "text-orange-600"
+                              }`}>
+                                {isGood ? "✓ " : "⚠ "}
+                                {userPercentage.toFixed(0)}% of avg
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 h-3 bg-gray-100 rounded-full overflow-hidden">
+                            <div 
+                              className="bg-green-500 transition-all duration-500"
+                              style={{ width: `${Math.min((item.user / Math.max(item.user, item.average)) * 100, 100)}%` }}
+                            />
+                            <div 
+                              className="bg-gray-300 transition-all duration-500"
+                              style={{ width: `${Math.min((item.average / Math.max(item.user, item.average)) * 100, 100)}%` }}
+                            />
                           </div>
                         </div>
-                        <div className="flex gap-2 h-3 bg-gray-100 rounded-full overflow-hidden">
-                          <div 
-                            className="bg-green-500 transition-all duration-500"
-                            style={{ width: `${Math.min((item.user / Math.max(item.user, item.average)) * 100, 100)}%` }}
-                          />
-                          <div 
-                            className="bg-gray-300 transition-all duration-500"
-                            style={{ width: `${Math.min((item.average / Math.max(item.user, item.average)) * 100, 100)}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-semibold text-blue-900">Your Spending Summary</h4>
-                  <p className="text-sm text-blue-800 mt-1">
-                    You're spending ${comparisonData.reduce((sum, item) => sum + item.user, 0).toLocaleString()} monthly, 
-                    which is ${comparisonData.reduce((sum, item) => sum + (item.average - item.user), 0).toLocaleString()} 
-                    {comparisonData.reduce((sum, item) => sum + (item.average - item.user), 0) > 0 ? 'less' : 'more'} than the average person. 
-                    {comparisonData.reduce((sum, item) => sum + (item.average - item.user), 0) > 0 ? 'Great job staying under budget!' : 'Consider reviewing your spending in some categories.'}
-                  </p>
-                </div>
+                      );
+                    })}
+                    <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                      <h4 className="font-semibold text-blue-900">Your Spending Summary</h4>
+                      <p className="text-sm text-blue-800 mt-1">
+                        You're spending ${expenseSummary.totalSpent.toLocaleString()} monthly based on your tracked expenses.
+                        {expenseSummary.expenseCount > 0 
+                          ? ` You have ${expenseSummary.expenseCount} recorded expenses.`
+                          : ' Start tracking your expenses to see detailed comparisons.'}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <h4 className="font-semibold text-gray-900 mb-2">Track Your Expenses to See Comparisons</h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Sign in and start tracking your expenses to see how you compare to the average person.
+                    </p>
+                    {!user ? (
+                      <Button onClick={() => setLoginOpen(true)}>
+                        Sign Up to Get Started
+                      </Button>
+                    ) : (
+                      <Button onClick={() => window.location.href = '/expenses'}>
+                        Track Your First Expense
+                      </Button>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -320,6 +367,7 @@ export default function Index() {
           </p>
         </div>
       </section>
+      <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
     </div>
   );
 }

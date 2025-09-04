@@ -1,8 +1,15 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 import { handleDemo } from "./routes/demo";
 import { handleNews } from "./routes/news";
+import { authRoutes } from "./routes/auth";
+import { expenseRoutes } from "./routes/expenses";
+import { budgetRoutes } from "./routes/budgets";
+import { policyRoutes } from "./routes/policies";
+import { authenticateToken } from "./middleware/auth";
 
 export function createServer() {
   const app = express();
@@ -20,6 +27,14 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
   app.get("/api/news", handleNews);
+
+  // Authentication routes
+  app.use("/api/auth", authRoutes);
+  
+  // Protected routes
+  app.use("/api/expenses", authenticateToken, expenseRoutes);
+  app.use("/api/budgets", authenticateToken, budgetRoutes);
+  app.use("/api/policies", policyRoutes);
 
   return app;
 }
